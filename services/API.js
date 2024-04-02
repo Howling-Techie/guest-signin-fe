@@ -23,9 +23,14 @@ const getGuestById = (userId) => {
         .then(handleResponse);
 };
 
+const getActiveSessions = () => {
+    return fetch(`${BASE_URL}/sessions/active`, {headers})
+        .then(handleResponse);
+};
+
 // POST requests
-const signGuestIn = (guestId, sessionData) => {
-    return fetch(`${BASE_URL}/guests/${guestId}/signin`, {
+const signGuestIn = (sessionData) => {
+    return fetch(`${BASE_URL}/sessions/signin`, {
         method: "POST",
         headers,
         body: JSON.stringify(sessionData),
@@ -35,8 +40,8 @@ const signGuestIn = (guestId, sessionData) => {
         });
 };
 
-const signGuestOut = (guestId, sessionData) => {
-    return fetch(`${BASE_URL}/guests/${guestId}/signout`, {
+const signGuestOut = (sessionId, sessionData) => {
+    return fetch(`${BASE_URL}/sessions/signout/${sessionId}`, {
         method: "POST",
         headers,
         body: JSON.stringify(sessionData),
@@ -59,4 +64,5 @@ export {
     signGuestOut,
     signGuestIn,
     createGuest,
+    getActiveSessions
 };
