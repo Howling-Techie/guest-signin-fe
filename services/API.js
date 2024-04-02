@@ -1,4 +1,4 @@
-const BASE_URL = "http://http://localhost:3000/api";
+const BASE_URL = "http://localhost:3000/api";
 
 const headers = {
     "Content-Type": "application/json",
@@ -44,9 +44,19 @@ const signGuestOut = (guestId, sessionData) => {
         .then(handleResponse);
 };
 
+const createGuest = (guestData) => {
+    return fetch(`${BASE_URL}/guests/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(guestData),
+    })
+        .then(handleResponse);
+};
+
 export {
     getGuests,
     getGuestById,
     signGuestOut,
-    signGuestIn
+    signGuestIn,
+    createGuest,
 };

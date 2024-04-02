@@ -1,17 +1,12 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Combobox} from '@headlessui/react';
 import {Container} from "../components/Container.jsx";
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import {FaCheck} from "react-icons/fa6";
 import {LuChevronsUpDown} from "react-icons/lu";
-
-const people = [
-    {id: 1, name: 'Existing User1'},
-    {id: 2, name: 'Existing User2'},
-    {id: 3, name: 'Existing User3'}
-    // Add your existing users here
-];
+import {createGuest, getGuests, signGuestIn} from "../../services/API.js";
+import {useNavigate} from "react-router-dom";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -20,6 +15,15 @@ function classNames(...classes) {
 export const SignIn = () => {
     const [query, setQuery] = useState('');
     const [selectedPerson, setSelectedPerson] = useState(null);
+    const [people, setPeople] = useState([]);
+
+    useEffect(() => {
+        getGuests().then(res => {
+            console.log(res.guests);
+            setPeople(res.guests);
+        });
+
+    }, []);
 
     const filteredPeople =
         query === ''
@@ -28,6 +32,7 @@ export const SignIn = () => {
                 return person.name.toLowerCase().includes(query.toLowerCase());
             });
     const [name, setName] = useState("");
+    const [from, setFrom] = useState("");
     const [contact, setContact] = useState("");
     const [reason, setReason] = useState("");
     const [showKeyboard, setShowKeyboard] = useState(false);
@@ -90,8 +95,39 @@ export const SignIn = () => {
 
     const enableSignIn = currentTab === 1 ? name && contact && reason : selectedPerson;
 
+    const navigate = useNavigate();
+
     const handleSignIn = () => {
-        // Redirect to the home page or any route you wish
+        const signIn = (id) => {
+            signGuestIn(id, {
+                guest: id,
+                checkInTime: (new Date()).toISOString(),
+                reason: reason
+            })
+                .then(() => {
+                    navigate("/");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        };
+
+        switch (currentTab) {
+            case 0:
+                signIn(selectedPerson.id);
+                break;
+            case 1:
+                createGuest({name, source: from, email: contact})
+                    .then(result => {
+                        signIn(result.guest.id);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+                break;
+            default:
+                return;
+        }
     };
     const tabs = ['Returning Guest', 'New Guest'];
 
@@ -182,6 +218,21 @@ export const SignIn = () => {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            From
+                                        </label>
+                                        <div className="relative mt-2 rounded-md shadow-sm">
+                                            <input
+                                                type="text"
+                                                name="from"
+                                                id="from"
+                                                className="block w-full rounded-md border-0 p-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                placeholder="Warrington Collegiate"
+                                                onChange={(e => setFrom(e.target.value))}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
                                             Reason for Visit
                                         </label>
                                         <div className="relative mt-2 rounded-md shadow-sm">
@@ -249,6 +300,21 @@ export const SignIn = () => {
                                             )}
                                         </div>
                                     </Combobox>
+                                    <div>
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            Reason for Visit
+                                        </label>
+                                        <div className="relative mt-2 rounded-md shadow-sm">
+                                            <input
+                                                type="text"
+                                                name="reason"
+                                                id="reason"
+                                                className="block w-full rounded-md border-0 p-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                placeholder="Volunteering"
+                                                onChange={(e => setReason(e.target.value))}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         <div className="pt-4">
