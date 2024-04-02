@@ -1,19 +1,19 @@
-import {useEffect, useState} from 'react';
-import {Combobox} from '@headlessui/react';
+import {useEffect, useState} from "react";
+import {Combobox} from "@headlessui/react";
 import {Container} from "../components/Container.jsx";
-import Keyboard from 'react-simple-keyboard';
-import 'react-simple-keyboard/build/css/index.css';
+import Keyboard from "react-simple-keyboard";
+import "react-simple-keyboard/build/css/index.css";
 import {FaCheck} from "react-icons/fa6";
 import {LuChevronsUpDown} from "react-icons/lu";
 import {createGuest, getGuests, signGuestIn} from "../../services/API.js";
 import {useNavigate} from "react-router-dom";
 
 function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
+    return classes.filter(Boolean).join(" ");
 }
 
 export const SignIn = () => {
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState("");
     const [selectedPerson, setSelectedPerson] = useState(null);
     const [people, setPeople] = useState([]);
 
@@ -26,7 +26,7 @@ export const SignIn = () => {
     }, []);
 
     const filteredPeople =
-        query === ''
+        query === ""
             ? people
             : people.filter((person) => {
                 return person.name.toLowerCase().includes(query.toLowerCase());
@@ -55,6 +55,11 @@ export const SignIn = () => {
             "{bksp}": () => setReason(reason.slice(0, -1)),
             "{space}": () => setReason(reason + " "),
             default: (input) => setReason(reason + input)
+        },
+        from: {
+            "{bksp}": () => setFrom(from.slice(0, -1)),
+            "{space}": () => setFrom(from + " "),
+            default: (input) => setFrom(from + input)
         }
     };
 
@@ -129,7 +134,7 @@ export const SignIn = () => {
                 return;
         }
     };
-    const tabs = ['Returning Guest', 'New Guest'];
+    const tabs = ["Returning Guest", "New Guest"];
 
 
     return (
@@ -165,11 +170,11 @@ export const SignIn = () => {
                                         }}
                                         className={classNames(
                                             currentTab === tabIdx
-                                                ? 'border-indigo-500 text-indigo-600'
-                                                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                                            'w-1/2 border-b-2 py-4 px-1 text-center text-sm font-medium'
+                                                ? "border-indigo-500 text-indigo-600"
+                                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                                            "w-1/2 border-b-2 py-4 px-1 text-center text-sm font-medium"
                                         )}
-                                        aria-current={currentTab === tabIdx ? 'page' : undefined}
+                                        aria-current={currentTab === tabIdx ? "page" : undefined}
                                     >
                                         {tab}
                                     </button>
@@ -192,6 +197,11 @@ export const SignIn = () => {
                                                 id="name"
                                                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                 placeholder="John Smith"
+                                                onFocus={() => {
+                                                    setShowKeyboard(true);
+                                                    setSelectedInput("name");
+                                                }}
+                                                value={name}
                                                 onChange={(e => setName(e.target.value))}
                                             />
                                         </div>
@@ -249,7 +259,8 @@ export const SignIn = () => {
                                 </div>
                             ) : (
                                 <div className="flex space-y-2 flex-col">
-                                    <Combobox as="div" value={selectedPerson} onChange={setSelectedPerson}>
+                                    <Combobox id="name-select" as="div" value={selectedPerson}
+                                              onChange={setSelectedPerson}>
                                         <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">Select
                                             a guest</Combobox.Label>
                                         <div className="relative mt-2">
@@ -272,21 +283,21 @@ export const SignIn = () => {
                                                             value={person}
                                                             className={({active}) =>
                                                                 classNames(
-                                                                    'relative cursor-default select-none py-2 pl-3 pr-9',
-                                                                    active ? 'bg-indigo-600 text-white' : 'text-gray-900'
+                                                                    "relative cursor-default select-none py-2 pl-3 pr-9",
+                                                                    active ? "bg-indigo-600 text-white" : "text-gray-900"
                                                                 )
                                                             }
                                                         >
                                                             {({active, selected}) => (
                                                                 <>
                                                                     <span
-                                                                        className={classNames('block truncate', selected && 'font-semibold')}>{person.name}</span>
+                                                                        className={classNames("block truncate", selected && "font-semibold")}>{person.name}</span>
 
                                                                     {selected && (
                                                                         <span
                                                                             className={classNames(
-                                                                                'absolute inset-y-0 right-0 flex items-center pr-4',
-                                                                                active ? 'text-white' : 'text-indigo-600'
+                                                                                "absolute inset-y-0 right-0 flex items-center pr-4",
+                                                                                active ? "text-white" : "text-indigo-600"
                                                                             )}
                                                                         >
                         <FaCheck className="h-5 w-5" aria-hidden="true"/>
