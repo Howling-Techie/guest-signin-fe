@@ -19,7 +19,6 @@ export const SignIn = () => {
 
     useEffect(() => {
         getGuests().then(res => {
-            console.log(res.guests);
             setPeople(res.guests);
         });
 
@@ -104,13 +103,13 @@ export const SignIn = () => {
 
     const handleSignIn = () => {
         const signIn = (id) => {
-            signGuestIn(id, {
+            signGuestIn({
                 guest: id,
                 checkInTime: (new Date()).toISOString(),
                 reason: reason
             })
                 .then(() => {
-                    navigate("/");
+                    navigate(`/?signin=${selectedPerson ? selectedPerson.name : name}`);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -291,7 +290,7 @@ export const SignIn = () => {
                                                             {({active, selected}) => (
                                                                 <>
                                                                     <span
-                                                                        className={classNames("block truncate", selected && "font-semibold")}>{person.name}</span>
+                                                                        className={classNames("block truncate", selected && "font-semibold")}>{person.name + " - " + person.source}</span>
 
                                                                     {selected && (
                                                                         <span
